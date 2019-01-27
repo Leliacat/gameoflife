@@ -4,8 +4,6 @@ window.onload = function(){
     const btn_play = document.getElementById('btn_play');
     const btn_stop = document.getElementById('btn_stop');
     const btn_init = document.getElementById('btn_init');
-    const btn_fast = document.getElementById('btn_fast');
-    const btn_slow = document.getElementById('btn_slow');
 
     //************************************************** variables **************************************************** */
 
@@ -25,13 +23,13 @@ window.onload = function(){
 
     // handle the interval at which the frame is refreshed
     // (time between currentGrid & nextGrid)
-    let delay = 50;
-
+    let delay;
+    let timeOut;
     //************************************************** functions *************************************************** */
 
     // create an empty 2D array (with the same number of cells as the grid on canvas) 
     // to store the state of each cell
-    const make2DArray = ( rowsNb, colsNb ) => {
+    const make2DArray = () => {
         let grid = new Array(rowsNb);
         for (let i = 0; i < rowsNb; i ++){
             grid[i] = new Array(colsNb);
@@ -95,16 +93,15 @@ window.onload = function(){
         const numberOfRows = grid.length;
         const numberOfCols = grid[0].length;
         // the nested loop begins one cell before the current cell and ends one cell after
-        // hence the -1 to 2(excluded), 
-        // the current cell being in position 0
-        // -1 ; 0 ; 1
+        // hence the -1 to 2(excluded); the current cell being in position 0
+        // we loop through -1 ; 0 ; 1
         for (let i = -1; i < 2; i++) {
             for (let j = -1; j < 2; j++) {
                 // the weird manipulation with the modulo aims at dealing with the edges of the grid
                 const row = (x + i + numberOfRows) % numberOfRows;
                 const col = (y + j + numberOfCols) % numberOfCols;
                 // at each loop we add to the neighbors the value of the cell (which is either 0 or 1)
-                // this way we get the number of neighbor
+                // this way we get the number of neighbors
                 neighbors += grid[row][col];
             }
         }
@@ -151,7 +148,7 @@ window.onload = function(){
         // the next grid becomes the current grid
         currentGrid = nextGrid;
         // window.requestAnimationFrame(refreshCanvas);
-        window.setTimeout(refreshCanvas, delay);
+        timeOut = window.setTimeout(refreshCanvas, delay);
         return currentGrid;
     }
 
@@ -161,24 +158,20 @@ window.onload = function(){
     const playGameOfLife = () => {
         console.log("button PLAY has been clicked");
         console.log('First element of CURRENT_GRID ' + currentGrid[0]);
-        // refreshCanvas(currentGrid);
+        delay = 50;
         refreshCanvas();
     }
 
     const stopGameOfLife = () => {
         console.log("button STOP has been clicked");
+        clearTimeout(timeOut);
     }
 
     const initGameofLife = () => {
         console.log("button INIT has been clicked");
-    }
-
-    const speedUpGame = () => {
-        console.log("button FAST has been clicked");
-    }
-
-    const slowDownGame = () => {
-        console.log("button SLOW has been clicked");
+        clearTimeout(timeOut);
+        currentGrid = make2DArray();
+        init();
     }
 
     //**************************************************** game of life *************************************************** */
@@ -186,75 +179,5 @@ window.onload = function(){
     btn_play.addEventListener('click', playGameOfLife);
     btn_stop.addEventListener('click', stopGameOfLife);
     btn_init.addEventListener('click', initGameofLife);
-    btn_fast.addEventListener('click', speedUpGame);
-    btn_slow.addEventListener('click', slowDownGame);
-    
-
-    // ctx.fillStyle = 'rgba(51, 204, 51, 0.5)';
-    // ctx.fillRect(x, y, cellSize, cellSize);
-    // ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-    // ctx.fillRect(x, y, cellSize, cellSize);
-    // refreshCanvas();
-
-        //   // add linear gradient
-        //   var grd = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-        //   // light blue
-        //   grd.addColorStop(0, '#8ED6FF');   
-        //   // dark blue
-        //   grd.addColorStop(1, '#004CB3');
-        //   context.fillStyle = grd;
-        //   context.fill();
-       
-
-    // Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît).
-    //  if (!isAlive && aliveNeighboursNb == 3){
-    //      isAlive = true;
-    //  }
-    // // Une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt.
-    // if (isAlive && aliveNeighboursNb >=2 && aliveNeighboursNb<=3 ){
-    //     isAlive = true;
-    // }else{
-    //     isAlive = false;
-    // }
-
-
-    // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
-    // Any live cell with two or three live neighbors lives on to the next generation.
-    // Any live cell with more than three live neighbors dies, as if by overpopulation.
-    // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
-
-    // fillRect(x, y, largeur, hauteur)
-    // Dessine un rectangle rempli.
-
-    // strokeRect(x, y, largeur, hauteur)
-    // Dessine un contour rectangulaire
-
-    // clearRect(x, y, largeur, hauteur)
-    // Efface la zone rectangulaire spécifiée, la rendant complètement transparente.
-
-    // stroke()
-    // Dessine la forme en traçant son contour.
-
-    // fill()
-    // Dessine une forme pleine en remplissant la zone de contenu du trajet.
-
-    // fillStyle = color
-    // Définit le style utilisé lors du remplissage de formes.
-    // strokeStyle = color
-    // Définit le style pour les contours des formes.
-
-    // save()
-    // Sauvegarde l'état du canevas dans sa globalité.
-    // restore()
-    // Restore le plus récent état sauvegardé du canevas.
-    
-    // const drawCell= (ctx, position) => {
-    //         let x = position[0] * cellSize;
-    //         let y = position[1] * cellSize;
-    //         ctx.fillRect(x,y,cellSize,cellSize);
-    // }
-
-    
-    
-        
+   
 }
